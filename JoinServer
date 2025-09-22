@@ -1,0 +1,181 @@
+-- Script para criar botão "Join in Secret Server" e fake ban
+-- Coloque este script em ServerScriptService
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- Criar RemoteEvents para comunicação client-server
+local createButtonRemote = Instance.new("RemoteEvent")
+createButtonRemote.Name = "CreateSecretButton"
+createButtonRemote.Parent = ReplicatedStorage
+
+local fakeBanRemote = Instance.new("RemoteEvent")
+fakeBanRemote.Name = "FakeBanPlayer"
+fakeBanRemote.Parent = ReplicatedStorage
+
+-- Função para criar o botão na tela do player
+createButtonRemote.OnServerEvent:Connect(function(player)
+    -- Enviar sinal para criar botão no client
+    createButtonRemote:FireClient(player)
+end)
+
+-- Função para aplicar o fake ban
+fakeBanRemote.OnServerEvent:Connect(function(player)
+    -- Criar mensagem de ban realista
+    local banMessage = {
+        Title = "🚫 ACCOUNT SUSPENDED",
+        MainText = "Your account has been permanently banned from Steal a brainrot",
+        Reason = "Exploiting/Cheating",
+        Details = {
+            "• Use of unauthorized third-party software",
+            "• Manipulation of game mechanics",
+            "• Multiple violations detected"
+        },
+        BanId = "BAN_" .. math.random(100000, 999999),
+        Date = os.date("%B %d, %Y at %I:%M %p"),
+        Appeal = "Appeals can be submitted at: support.stealbrainrot.com"
+    }
+    
+    -- Esperar um pouco para dar suspense
+    wait(2)
+    
+    -- Kickar o player com mensagem de ban
+    local fullMessage = string.format([[
+🚫 ACCOUNT PERMANENTLY BANNED 🚫
+
+Game: Steal a brainrot
+Player: %s
+Reason: Exploiting/Cheating
+Ban ID: %s
+Date: %s
+
+Your account has been permanently suspended for:
+• Use of unauthorized third-party software
+• Manipulation of game mechanics  
+• Multiple violations detected
+
+This ban is permanent and cannot be appealed.
+
+For more information, contact support at:
+support.stealbrainrot.com
+    ]], player.Name, banMessage.BanId, banMessage.Date)
+    
+    player:Kick(fullMessage)
+end)
+
+-- Criar o botão automaticamente quando o player entra
+Players.PlayerAdded:Connect(function(player)
+    -- Esperar o player carregar completamente
+    player.CharacterAdded:Wait()
+    wait(3) -- Esperar 3 segundos após spawn
+    
+    -- Criar botão para o player
+    createButtonRemote:FireClient(player)
+end)
+
+--[[
+LOCALSCRIPT - Coloque este código abaixo em um LocalScript dentro de StarterPlayer > StarterPlayerScripts
+]]--
+
+--[[
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Aguardar os RemoteEvents
+local createButtonRemote = ReplicatedStorage:WaitForChild("CreateSecretButton")
+local fakeBanRemote = ReplicatedStorage:WaitForChild("FakeBanPlayer")
+
+-- Função para criar o botão na tela
+local function createSecretButton()
+    -- Criar ScreenGui
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "SecretServerGui"
+    screenGui.ResetOnSpawn = false
+    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    screenGui.Parent = playerGui
+    
+    -- Criar Frame principal
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Name = "MainFrame"
+    mainFrame.Size = UDim2.new(0, 250, 0, 80)
+    mainFrame.Position = UDim2.new(1, -270, 0.5, -40)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Parent = screenGui
+    
+    -- Adicionar bordas arredondadas
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 8)
+    corner.Parent = mainFrame
+    
+    -- Adicionar stroke
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(100, 100, 100)
+    stroke.Thickness = 1
+    stroke.Parent = mainFrame
+    
+    -- Criar botão
+    local button = Instance.new("TextButton")
+    button.Name = "SecretButton"
+    button.Size = UDim2.new(1, -20, 0, 40)
+    button.Position = UDim2.new(0, 10, 0, 20)
+    button.BackgroundColor3 = Color3.fromRGB(0, 162, 255)
+    button.BorderSizePixel = 0
+    button.Text = "🔒 Join Secret Server"
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.TextScaled = true
+    button.Font = Enum.Font.GothamBold
+    button.Parent = mainFrame
+    
+    -- Bordas arredondadas no botão
+    local buttonCorner = Instance.new("UICorner")
+    buttonCorner.CornerRadius = UDim.new(0, 6)
+    buttonCorner.Parent = button
+    
+    -- Animação de entrada
+    mainFrame.Position = UDim2.new(1, 0, 0.5, -40)
+    local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+    local slideIn = TweenService:Create(mainFrame, tweenInfo, {
+        Position = UDim2.new(1, -270, 0.5, -40)
+    })
+    slideIn:Play()
+    
+    -- Efeito hover
+    button.MouseEnter:Connect(function()
+        local hoverTween = TweenService:Create(button, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(30, 144, 255)
+        })
+        hoverTween:Play()
+    end)
+    
+    button.MouseLeave:Connect(function()
+        local hoverTween = TweenService:Create(button, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(0, 162, 255)
+        })
+        hoverTween:Play()
+    end)
+    
+    -- Função quando clicado
+    button.MouseButton1Click:Connect(function()
+        -- Animação de clique
+        button.Text = "⏳ Connecting..."
+        button.BackgroundColor3 = Color3.fromRGB(255, 193, 7)
+        
+        -- Esperar um pouco para criar suspense
+        wait(1.5)
+        
+        -- Disparar evento para o servidor aplicar fake ban
+        fakeBanRemote:FireServer()
+        
+        -- Remover GUI após clicar
+        screenGui:Destroy()
+    end)
+end
+
+-- Conectar evento para criar botão
+createButtonRemote.OnClientEvent:Connect(createSecretButton)
+]]--
