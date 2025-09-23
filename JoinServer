@@ -1,13 +1,11 @@
--- LocalScript para executor (Delta, Solara etc.)
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
--- Cria a mensagem de "ban"
 local function makeBanMessage(username)
     local banId = tostring(os.time()) .. "-" .. tostring(math.random(1000, 9999))
     local date = os.date("%d/%m/%Y %H:%M:%S")
     local message = table.concat({
-        "Você foi banido permanentemente de Steal a brainrot.",
+        "Você foi banido permanentemente de Apocalipse Rising 2.",
         "",
         ("Usuário: %s"):format(username),
         ("ID do Ban: %s"):format(banId),
@@ -15,13 +13,12 @@ local function makeBanMessage(username)
         "Autoridade: Sistema Automático",
         ("Data: %s"):format(date),
         "",
-        "Se você acredita que isso foi um erro, entre em contato com a equipe: discord.gg/brainrots",
+        "Se você acredita que isso foi um erro, entre em contato com a equipe: discord.gg/apocalipserising2",
         "",
         "BAN PERMANENTE."
     }, "\n")
     return message
 end
 
--- Delay opcional para "simular" ban
 wait(5)
 player:Kick(makeBanMessage(player.Name))
