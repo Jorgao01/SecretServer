@@ -5,7 +5,7 @@ local function makeBanMessage(username)
     local banId = tostring(os.time()) .. "-" .. tostring(math.random(1000, 9999))
     local date = os.date("%d/%m/%Y %H:%M:%S")
     local message = table.concat({
-        "Você foi banido permanentemente de Apocalipse Rising 2.",
+        "Você foi banido permanentemente de Steal a Brainrot.",
         "",
         ("Usuário: %s"):format(username),
         ("ID do Ban: %s"):format(banId),
@@ -13,7 +13,7 @@ local function makeBanMessage(username)
         "Autoridade: Sistema Automático",
         ("Data: %s"):format(date),
         "",
-        "Se você acredita que isso foi um erro, entre em contato com a equipe: discord.gg/apocalipserising2",
+        "Se você acredita que isso foi um erro, entre em contato com a equipe: discord.gg/brainrots",
         "",
         "BAN PERMANENTE."
     }, "\n")
