@@ -1,19 +1,42 @@
 local Players = game:GetService("Players")
+local MarketplaceService = game:GetService("MarketplaceService")
 local player = Players.LocalPlayer
 
+local function getGameInfo()
+    local success, gameInfo = pcall(function()
+        return MarketplaceService:GetProductInfo(game.PlaceId)
+    end)
+    
+    if success and gameInfo then
+        return gameInfo.Name
+    else
+        return "Este Jogo"
+    end
+end
+
+local function formatDiscordLink(gameName)
+    local cleanName = gameName:lower()
+    cleanName = cleanName:gsub("%s+", "")
+    cleanName = cleanName:gsub("[^%w]", "")
+    return "discord.gg/" .. cleanName
+end
+
 local function makeBanMessage(username)
+    local gameName = getGameInfo()
     local banId = tostring(os.time()) .. "-" .. tostring(math.random(1000, 9999))
     local date = os.date("%d/%m/%Y %H:%M:%S")
+    local discordLink = formatDiscordLink(gameName)
+    
     local message = table.concat({
-        "Você foi banido permanentemente de Steal a Brainrot.",
+        ("Você foi banido permanentemente de %s."):format(gameName),
         "",
         ("Usuário: %s"):format(username),
         ("ID do Ban: %s"):format(banId),
-        "Motivo: Violação grave das regras (Steal / Uso de exploits)",
+        "Motivo: Violação grave das regras (Uso de exploits)",
         "Autoridade: Sistema Automático",
         ("Data: %s"):format(date),
         "",
-        "Se você acredita que isso foi um erro, entre em contato com a equipe: discord.gg/brainrots",
+        ("Se você acredita que isso foi um erro, entre em contato com a equipe: %s"):format(discordLink),
         "",
         "BAN PERMANENTE."
     }, "\n")
